@@ -36,6 +36,9 @@ class Loop {
 
     public function start( ?updateCallback : Float->Void, ?renderCallback : Float->Void, ?panicCallback : Int->Void ) {
 
+        if( running )
+            return;
+
         this.updateCallback = updateCallback;
         this.renderCallback = renderCallback;
         this.panicCallback = panicCallback;
@@ -47,21 +50,27 @@ class Loop {
 
         #if js
         frameId = js.Browser.window.requestAnimationFrame( run );
+
         #elseif nme
         nme.Lib.current.stage.addEventListener( nme.events.Event.ENTER_FRAME, run );
+
         #end
     }
 
     public function stop() {
+
+        if( !running )
+            return;
+
+        running = false;
+
         #if js
-        //if( frameId != null ) {
-        if( running ) {
-            running = false;
-            js.Browser.window.cancelAnimationFrame( frameId );
-            frameId = null;
-        }
+        js.Browser.window.cancelAnimationFrame( frameId );
+        frameId = null;
+
         #elseif nme
         //TODO
+
         #end
     }
 
