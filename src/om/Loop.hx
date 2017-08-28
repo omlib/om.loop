@@ -69,7 +69,7 @@ class Loop {
         frameId = null;
 
         #elseif nme
-        //TODO
+        nme.Lib.current.stage.removeEventListener( nme.events.Event.ENTER_FRAME, run );
 
         #end
     }
