@@ -75,15 +75,17 @@ class Loop {
     }
 
     #if js
-    function run( _time : Float ) {
+    function run( time : Float ) {
     #elseif nme
     function run( e : nme.events.Event ) {
     #end
 
-        var now = Time.stamp();
+        #if nme
+        var time = Time.stamp();
+        #end
+        delta += time - lastFrameTime;
+        lastFrameTime = time;
         //timeElapsed = now - timeStart;
-        delta += now - lastFrameTime;
-        lastFrameTime = now;
 
         //if( beginCallback != null ) beginCallback();
 
