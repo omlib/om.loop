@@ -2,36 +2,36 @@ package om;
 
 class Loop {
 
-    //public var beginCallback : Float->Void;
+    public var beforeCallback : Float->Void;
     public var updateCallback : Float->Void;
     public var renderCallback : Float->Void;
-    //public var endCallback : Float->Void;
+    public var afterCallback : Float->Void;
     public var panicCallback : Int->Void;
 
+    /** The amount of time (in milliseconds) to simulate each time update() runs. */
+    public var timestep : Float; // 1000/60;
+
+    /** */
     public var running(default,null) = false;
+
+    /** */
+    public var maxUpdateSteps : Int;
 
     //public var timeStart(default,null) : Float;
     //public var timeElapsed(default,null) : Float;
-    public var lastFrameTime(default,null) : Float;
+    //public var framesRendered(default,null) : Int;
 
-    /**
-        The amount of time (in milliseconds) to simulate each time update() runs.
-    */
-    public var timestep : Float; // 1000/60;
-
-    /**
-    */
-    public var panic : Int;
-
+    var lastFrameTime : Float;
     var delta : Float;
+    var numUpdateSteps : Int;
 
     #if js
     var frameId : Int;
     #end
 
-    public function new( timestep = 1000/60, panic = 240 ) {
+    public function new( timestep = 1000/60, maxUpdateSteps = 60 ) {
         this.timestep = timestep;
-        this.panic = panic;
+        this.maxUpdateSteps = maxUpdateSteps;
     }
 
     public function start( ?updateCallback : Float->Void, ?renderCallback : Float->Void, ?panicCallback : Int->Void ) {
@@ -45,15 +45,12 @@ class Loop {
 
         running = true;
         delta = 0.0;
-        //timeStart =
         lastFrameTime = Time.now();
 
         #if js
-        frameId = js.Browser.window.requestAnimationFrame( run );
-
+        frameId = js.Browser.window.requestAnimationFrame( tick );
         #elseif nme
-        nme.Lib.current.stage.addEventListener( nme.events.Event.ENTER_FRAME, run );
-
+        nme.Lib.current.stage.addEventListener( nme.events.Event.ENTER_FRAME, onEnterFrame );
         #end
     }
 
@@ -69,32 +66,24 @@ class Loop {
         frameId = null;
 
         #elseif nme
-        nme.Lib.current.stage.removeEventListener( nme.events.Event.ENTER_FRAME, run );
+        nme.Lib.current.stage.removeEventListener( nme.events.Event.ENTER_FRAME, onEnterFrame );
 
         #end
     }
 
-    #if js
-    function run( time : Float ) {
-    #elseif nme
-    function run( e : nme.events.Event ) {
-    #end
+    function tick( time : Float ) {
 
-        #if nme
-        var time = Time.stamp();
-        #end
         delta += time - lastFrameTime;
         lastFrameTime = time;
-        //timeElapsed = now - timeStart;
 
-        //if( beginCallback != null ) beginCallback();
+        //if( beforeCallback != null ) beforeCallback( timestep );
 
-        var i = 0;
+        numUpdateSteps = 0;
+
         while( delta >= timestep ) {
             if( updateCallback != null ) updateCallback( timestep );
-            if( ++i >= panic ) {
-                trace( 'PANIC '+i ); // fix things
-                if( panicCallback != null ) panicCallback( i );
+            if( ++numUpdateSteps >= maxUpdateSteps ) {
+                if( panicCallback != null ) panicCallback( numUpdateSteps );
                 delta = 0;
                 break;
             } else {
@@ -104,11 +93,21 @@ class Loop {
 
         if( renderCallback != null ) renderCallback( timestep );
 
-        //if( endCallback != null ) endCallback();
+        //framesRendered++;
+
+        //if( afterCallback != null ) afterCallback( timestep );
 
         #if js
-        frameId = js.Browser.window.requestAnimationFrame( run );
+        frameId = js.Browser.window.requestAnimationFrame( tick );
         #end
     }
+
+    #if nme
+
+    function onEnterFrame( e : nme.events.Event ) {
+        tick( Timer.stamp() );
+    }
+
+    #end
 
 }

@@ -1,4 +1,4 @@
 _*
 doc/
-example/bin/*.js*
+example/**.js*
 test/bin/
