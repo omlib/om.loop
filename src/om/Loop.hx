@@ -34,10 +34,9 @@ class Loop {
         this.maxUpdateSteps = maxUpdateSteps;
     }
 
-    public function start( ?updateCallback : Float->Void, ?renderCallback : Float->Void, ?panicCallback : Int->Void ) {
+    public function start( ?updateCallback : Float->Void, ?renderCallback : Float->Void, ?panicCallback : Int->Void ) : Loop {
 
-        if( running )
-            return;
+        if( running ) stop();
 
         this.updateCallback = updateCallback;
         this.renderCallback = renderCallback;
@@ -52,12 +51,13 @@ class Loop {
         #elseif nme
         nme.Lib.current.stage.addEventListener( nme.events.Event.ENTER_FRAME, onEnterFrame );
         #end
+
+        return this;
     }
 
-    public function stop() {
+    public function stop() : Loop {
 
-        if( !running )
-            return;
+        if( !running ) return this;
 
         running = false;
 
@@ -69,6 +69,8 @@ class Loop {
         nme.Lib.current.stage.removeEventListener( nme.events.Event.ENTER_FRAME, onEnterFrame );
 
         #end
+
+        return this;
     }
 
     function tick( time : Float ) {
