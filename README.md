@@ -1,4 +1,4 @@
 
 # OM.LOOP
 
-> Main loop with fixed time steps.
+> Application loop with fixed time steps.
