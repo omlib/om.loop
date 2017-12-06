@@ -2,7 +2,6 @@
 -lib om.loop
 --macro include('om.Loop')
 -dce no
--D doc
 -D doc-gen
 --each
 
