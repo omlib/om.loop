@@ -24,10 +24,7 @@ class Loop {
     var lastFrameTime : Float;
     var delta : Float;
     var numUpdateSteps : Int;
-
-    #if js
     var frameId : Int;
-    #end
 
     public function new( timestep = 1000/60, maxUpdateSteps = 60 ) {
         this.timestep = timestep;
@@ -46,11 +43,7 @@ class Loop {
         delta = 0.0;
         lastFrameTime = Time.now();
 
-        #if js
         frameId = js.Browser.window.requestAnimationFrame( tick );
-        #elseif nme
-        nme.Lib.current.stage.addEventListener( nme.events.Event.ENTER_FRAME, onEnterFrame );
-        #end
 
         return this;
     }
@@ -61,14 +54,8 @@ class Loop {
 
         running = false;
 
-        #if js
         js.Browser.window.cancelAnimationFrame( frameId );
         frameId = null;
-
-        #elseif nme
-        nme.Lib.current.stage.removeEventListener( nme.events.Event.ENTER_FRAME, onEnterFrame );
-
-        #end
 
         return this;
     }
@@ -99,17 +86,7 @@ class Loop {
 
         //if( afterCallback != null ) afterCallback( timestep );
 
-        #if js
         frameId = js.Browser.window.requestAnimationFrame( tick );
-        #end
     }
-
-    #if nme
-
-    function onEnterFrame( e : nme.events.Event ) {
-        tick( Timer.stamp() );
-    }
-
-    #end
 
 }
