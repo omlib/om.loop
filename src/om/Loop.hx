@@ -1,5 +1,7 @@
 package om;
 
+import js.Browser.window;
+
 class Loop {
 
     public var beforeCallback : Float->Void;
@@ -35,26 +37,26 @@ class Loop {
 
         if( running ) stop();
 
-        this.updateCallback = updateCallback;
-        this.renderCallback = renderCallback;
-        this.panicCallback = panicCallback;
+        if( updateCallback != null ) this.updateCallback = updateCallback;
+        if( renderCallback != null ) this.renderCallback = renderCallback;
+        if( panicCallback != null ) this.panicCallback = panicCallback;
 
         running = true;
         delta = 0.0;
         lastFrameTime = Time.now();
 
-        frameId = js.Browser.window.requestAnimationFrame( tick );
+        frameId = window.requestAnimationFrame( tick );
 
         return this;
     }
 
     public function stop() : Loop {
 
-        if( !running ) return this;
+        if( !running )
+            return this;
 
         running = false;
-
-        js.Browser.window.cancelAnimationFrame( frameId );
+        window.cancelAnimationFrame( frameId );
         frameId = null;
 
         return this;
