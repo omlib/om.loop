@@ -1,6 +1,6 @@
 --no-output
 -lib om.loop
---macro include('om.Loop')
+--macro include('om.loop')
 -dce no
 -D doc-gen
 --each

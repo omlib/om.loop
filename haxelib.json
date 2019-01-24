@@ -1,9 +1,9 @@
 {
     "name": "om.loop",
     "version": "0.0.0",
-    "description": "Game loop with fixed time steps",
+    "description": "Main loop with fixed time steps",
     "tags": ["om","activity"],
-    "url": "https://github.com/tong/om.gameloop",
+    "url": "https://github.com/omlib/om.gameloop",
     "license": "OM",
     "contributors": ["tong"],
     "releasenote": "See CHANGELOG.md",
